@@ -3,15 +3,13 @@ import Filters from './Filters'
 import PetBrowser from './PetBrowser'
 
 class App extends React.Component {
-  constructor() {
-    super()
-    this.state = {
+
+    state = {
       pets: [],
       filters: {
         type: 'all'
       }
     }
-  }
   
   handleFilters = (newType) =>{
     this.setState({
@@ -35,15 +33,26 @@ class App extends React.Component {
     fetch(`/api/${extension}`)
       .then(response => response.json())
       .then(data => {
+        //console.log(data)
         this.setState({
-          pets: [data]
+          pets: data
       })
     })
   }
 
   handleAdoption =(id) =>{
-    this.state.pets.find(e => e===id) 
-     
+    //console.log('adopting', id)
+    let petsObj = this.state.pets.map(e => {
+      if (e.id === id){
+        return {...e,
+          isAdopted:true}
+      }else{
+        return e
+      }
+    }) 
+    this.setState({
+      pets: petsObj
+    })
   }
 
   render() {
@@ -60,7 +69,7 @@ class App extends React.Component {
                 onFindPetsClick={this.handleFetch}/>
             </div>
             <div className="twelve wide column">
-              <PetBrowser onAdoptPet={this.handleAdoption}/>
+              <PetBrowser onAdoptPet={this.handleAdoption} pets={this.state.pets}/>
             </div>
           </div>
         </div>
